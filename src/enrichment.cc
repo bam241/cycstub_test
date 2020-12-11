@@ -408,6 +408,23 @@ cyclus::Material::Ptr Enrichment::Enrich_(cyclus::Material::Ptr mat,
   // "enrich" it, but pull out the composition and quantity we require from the
   // blob
   cyclus::Composition::Ptr comp = mat->comp();
+  
+ //Tweak composition
+  cyclus::CompMap r_comp = r->comp()->mass();
+  // check if u236 is present in r
+  if( r_comp.find(922360000) != r_comp.end()){
+  	std::cout << "There is U236 present in my feed" << std::endl;
+	float u5_frac = r_comp[922350000];
+	float u6_frac = r_comp[922360000];
+	double frac_6_5 = u6_frac/(u5_frac+u6_frac);
+
+	cyclus::CompMap comp_product = comp->mass();
+	comp_product[922360000] = comp_product[922350000]*frac_6_5;
+	comp_product[922350000] = comp_product[922350000]*(1-frac_6_5);
+	comp = cyclus::Composition::CreateFromMass(comp_product);
+  }
+  
+  
   Material::Ptr response = r->ExtractComp(qty, comp);
   tails.Push(r);
 
