@@ -25,6 +25,7 @@ Enrichment::Enrichment(cyclus::Context* ctx)
       order_prefs(true),
       latitude(0.0),
       longitude(0.0),
+      additional_nuclide(0),
       coordinates(latitude, longitude) {}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -411,16 +412,16 @@ cyclus::Material::Ptr Enrichment::Enrich_(cyclus::Material::Ptr mat,
   
  //Tweak composition
   cyclus::CompMap r_comp = r->comp()->mass();
-  // check if u236 is present in r
-  if( r_comp.find(922360000) != r_comp.end()){
-  	std::cout << "There is U236 present in my feed" << std::endl;
+  // check if the additional nuclide is present in r
+  if( r_comp.find(additional_nuclide) != r_comp.end()){
+  	std::cout << "There is " << additional_nuclide << " present in my feed" << std::endl;
 	float u5_frac = r_comp[922350000];
-	float u6_frac = r_comp[922360000];
-	double frac_6_5 = u6_frac/(u5_frac+u6_frac);
+	float my_nuc_frac = r_comp[additional_nuclide];
+	double frac_to_u5 = my_nuc_frac/(u5_frac+my_nuc_frac);
 
 	cyclus::CompMap comp_product = comp->mass();
-	comp_product[922360000] = comp_product[922350000]*frac_6_5;
-	comp_product[922350000] = comp_product[922350000]*(1-frac_6_5);
+	comp_product[additional_nuclide] = comp_product[922350000]*frac_to_u5;
+	comp_product[922350000] = comp_product[922350000]*(1-frac_to_u5);
 	comp = cyclus::Composition::CreateFromMass(comp_product);
   }
   

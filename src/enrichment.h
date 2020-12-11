@@ -282,6 +282,15 @@ class Enrichment
     "uitype": "inrecipe" \
   }
   std::string feed_recipe;
+  
+  #pragma cyclus var { \
+    "tooltip": "additional nuclide",						\
+    "doc": "nuclide that will follow u235 in the enrichment process",		\
+    "uilabel": "Added Nuclide",                                   \
+    "uitype": "nuclide", \
+    "default": 0 \
+  }
+  int additional_nuclide;
 
   #pragma cyclus var { \
     "tooltip": "product commodity",					\
